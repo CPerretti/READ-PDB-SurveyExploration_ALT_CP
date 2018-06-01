@@ -78,7 +78,7 @@ Winner        1  2  3  4
   WingSpread 12 15 13 14  
 ```
 
-So every case had more Standard winners than WingSpread winners. An Excel file (stock_winners.xlsx) is also provided in the output directory that combines the two csv files into a nicer looking table.
+So every case had more Standard winners than WingSpread winners. An Excel file (stock_winners.xlsx) is also provided in the output directory that combines the two csv files into a nicer looking table. However, none of the winners were significant as defined by the slope for the WingSpread regression was always within plus minus 1.96 times the standard error of the slope for the Standard regression.
 
 For each stock and case, the mean depth of tows used in the analysis was computed. Plotting the winner by color relative to depth did not reveal a strong link between mean depth and which approach was preferred for any of the four cases. Note the order of the stocks changes among the four plots because each is sorted by depth.
 

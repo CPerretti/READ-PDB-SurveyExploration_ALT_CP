@@ -43,6 +43,11 @@ for (istock in 1:nstocks){
     if(abs(standard_slope) < abs(wingarea_slope)) winner <- "Standard"
     if(abs(standard_slope) == abs(wingarea_slope)) winner <- "Tie"
     
+    # check for significant winner (outside plus minus 1.96 std devs)
+    standard_slope_stderr <- coef(summary(standard_lm))["wing_area_swept", "Std. Error"]
+    if (wingarea_slope < standard_slope - 1.96 * standard_slope_stderr |
+        wingarea_slope > standard_slope + 1.96 * standard_slope_stderr) winner = paste(winner, "Significant")
+    
     mean_depth = mean(mycase$Depth, na.rm = TRUE)
 
     this.result <- data.frame(ID = istock,
