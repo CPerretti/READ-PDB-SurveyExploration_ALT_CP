@@ -111,6 +111,9 @@ aic_table <- data.frame(Model = c(0:9),
 aic_table 
 write.csv(aic_table, "output/aic_table.csv", row.names = FALSE)
 
+model9_coeffs <- model9$coefficients
+write.csv(model9_coeffs, "output/model9_coeffs.csv")
+
 # make data frames of predicted values for best model (model 9)
 p0 <- data.frame(MEAN_DOOR_SPREAD_METERS = seq(20, 45),
                  MEAN_WING_SPRD_METERS = predict(model0, 
