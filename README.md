@@ -47,7 +47,7 @@ Cstandard = CatchWt / standard__wing_swept_area
 Cwingarea = CatchWt / wing_area_swept  
 These are the variables that will be used in the analyses.
 
-### 4-determine_winner.r
+### 4-determine_winner_aic.r
 
 Four different cases were examined
 
@@ -58,13 +58,13 @@ Without | Case 3     | Case 4
 
 In this table, With Fills means using the DoorFill and GlobalFill values, while Without Fills means using only the tows where wing area swept was Measured. Similarly, With Zeros means using all data collected during the survey including the zero catch tows, while Without Zeros means using only tows that caught fish in the particular stock being analyzed. It wasn't clear to me which case would be the preferred one to use, so I ran all four. You can pick the one you like the most and focus on the results from it.
 
-For each case and stock, two linear regressions were conducted, the first using CStandard and the second using Cwingarea. The catch per area was a function of year, season, strata, and depth as follows
+For each case and stock, two linear regressions were conducted, both of which use CStandard, the first uses wing_swept_area, the other does not. The catch per area was a function of year, season, strata, and depth as follows
 
 ```
 lm(Cstandard ~ as.factor(Year) * as.factor(Season) * as.factor(Strata) + wing_area_swept, data=mycase)
 ```
 
-Stocks that used only one season dropped this term from the equation. Since year, season, and strata were multiplicative, this means that each combination of year, season, strata had its own intercept and only wing_area_swept determined the slope of the line for the two regressions. The test conducted was simply which regression had a slope associated with wing_area_swept that was closer to zero. A slope closer to zero would be expected for Cstandard if the variability in the system was too large to detect the expected linear increase with wing_swept_area. Using all the data for a stock at once to estimate the slope relative to wing_swept_area gave the highest precision estimate. If the two slopes, for Cstandard and Cwingarea, were equidistant from zero, a tie was declared. No ties were observed across the 140 results (35 stocks by 4 cases). See below for an example plot to see what a winner looks like.
+Stocks that used only one season dropped this term from the equation. Since year, season, and strata were multiplicative, this means that each combination of year, season, strata had its own intercept. The test conducted was simply whether AIC supported the inclusion of the wing_area_swept term.
 
 ### 5-make_tables_plots.r
 
@@ -74,11 +74,11 @@ The winners for each stock and case are found in output/stock_winners.csv. The t
 with(results, table(Winner, Case))  
             Case  
 Winner        1  2  3  4  
-  Standard   23 20 22 21  
-  WingSpread 12 15 13 14  
+  Standard   25 23 22 20  
+  WingSpread 10 12 13 15  
 ```
 
-So every case had more Standard winners than WingSpread winners. An Excel file (stock_winners.xlsx) is also provided in the output directory that combines the two csv files into a nicer looking table. However, none of the winners were significant as defined by the slope for the WingSpread regression was always within plus minus 1.96 times the standard error of the slope for the Standard regression.
+So every case had more Standard winners than WingSpread winners. An Excel file (stock_winners.xlsx) is also provided in the output directory that combines the two csv files into a nicer looking table. 
 
 For each stock and case, the mean depth of tows used in the analysis was computed. Plotting the winner by color relative to depth did not reveal a strong link between mean depth and which approach was preferred for any of the four cases. Note the order of the stocks changes among the four plots because each is sorted by depth.
 
@@ -87,9 +87,7 @@ For each stock and case, the mean depth of tows used in the analysis was compute
 ![](output/case_plot_3.png)
 ![](output/case_plot_4.png)
 
-Finally, plots of the regresion lines fit for each stock are made where each stock and year is a separate page and the season and strata are plots within the page. For some stocks, this results in plots that are too small to read easily. The code can be easily changed to look at a specific stock in more detail, but was not done here because of the large file size and long run times required (about 1.5 hours on my machine) already. An example is provided at the bottom of the file that looks at the fits to a single stock, year, season, strata. In this plot the Cstandard values are shown as blue dots and the adjusted for tow area (Cwingarea) values are shown as red dots. Note that to the left of the vertical line (the standard wing_area_swept value) the red dots are greater than the blue dots, while to the right of the vertical line the red dots are below the blue dots. The two colored lines show the respective fits. In this particular combination, the standard approach (blue) has a slope closer to zero than the tow area approach (red), meaning that adjusting the observations to account for the towed area did not produce a better fitting model. Remember that the fit is determined by all combinations of year, season, and strata for the stock, so one cannot look at just one combination and draw conclusions.
-
-![](output/example_catch_per_area_with_regressions.png)
+Interestingly, of the cases in which the winner was the model with wing spread, only 52% had a positive estimated effect of wing spread on catch. In other words, roughly half of the time there was a *negative* correlation between wing spread and catch, which is the opposite of what one would expect. This is further evidence that the inclusion of wing-spread does not result in an improvement in estimated catch in the majority of cases.
 
 The pdf file creation is turned off by default. The user needs to change the make_pdf variable from FALSE to TRUE if they want to create the pdf files. The four files are available in the output directory with the creative names stock_specific_plots_case_[1, 2, 3, or 4].pdf. Looking through these plots one obvious result is that there is not much difference between the Cstandard (blue) and Cwingarea (red) values. When zero values are used (Cases 1 and 3), the zeros will be identical for Cstandard and Cwingarea. 
 
