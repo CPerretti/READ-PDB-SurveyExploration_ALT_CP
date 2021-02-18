@@ -1,4 +1,15 @@
-source("4-determine_winner.r")
+source("4alt-determine_winner_aic.r")
+
+# For the models in which wingspread was selected by AIC, what
+# proportion of those models have a positive wingspread effect (which
+# is what we would expect)? This is only use if
+# 4alt-determine_winner_aic.r is ran.
+if(!is.null(results$wing_spread_effect)) {
+  frac_positive_wingspread_effect <- 
+    sum(results$wing_spread_effect > 0, na.rm=T)/sum(!is.na(results$wing_spread_effect))
+  print(paste("Fraction of wingspread effects that are positive =", 
+              frac_positive_wingspread_effect))
+}
 
 # winners table (combine the two csv files in Excel to make an xlsx)
 stock_winners <- spread(select(results, -mean_depth), Case, Winner)
